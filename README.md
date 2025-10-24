@@ -1,0 +1,2 @@
+# LLM-Enhanced-Constant-Folding-and-Code-Optimization-Demonstrator
+An AI-assisted compiler optimization project that integrates a Large Language Model (LLM) with a C-based compiler to enhance constant folding and code optimization. The system intelligently detects constant expressions, performs compile-time simplifications, and uses the LLM to validate semantic correctness and suggest further safe optimizations.
