@@ -1,0 +1,50 @@
+=== OPTIMIZED THREE-ADDRESS CODE (IR) ===
+
+FUNCTION factorial:
+  PUSH_PARAM n
+  DECLARE result
+  t0 = 1
+  result = t1
+  t2 = n
+  t4 = 1
+  t6 = t3 <= t5
+  IF_FALSE t7 GOTO L0
+  t8 = result
+  RETURN t9
+  GOTO L1
+L0:
+L1:
+L2:
+  t10 = n
+  t12 = 1
+  t14 = t11 > t13
+  IF_FALSE t15 GOTO L3
+  t16 = result
+  t18 = n
+  t20 = t17 * t19
+  result = t21
+  t22 = n
+  t24 = 1
+  t26 = t23 - t25
+  n = t27
+  GOTO L2
+L3:
+  t28 = result
+  RETURN t29
+END FUNCTION factorial
+
+
+FUNCTION main:
+  DECLARE x
+  DECLARE y
+  t30 = 5
+  x = t31
+  t32 = x
+  PUSH_PARAM t33
+  t34 = CALL , 1
+  y = t35
+  t36 = y
+  RETURN t37
+END FUNCTION main
+
+
