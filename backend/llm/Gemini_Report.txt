@@ -1,0 +1,9 @@
+*   ⚠️ Issues Found: Uninitialized variables and dead code.
+*   Semantics not preserved: `t1` and `t4` are used uninitialized, leading to undefined behavior.
+*   Further: Eliminate dead code: `t0`, `t2`, `t3` assignments and `PUSH_PARAM t1`.
+*   Further: Resolve missing function name in `CALL` (or remove if unused).
+
+--- Optimization ---
+FUNCTION main:
+  RETURN 0
+END FUNCTION main
