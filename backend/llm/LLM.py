@@ -16,7 +16,9 @@ def LLM():
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
     GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
 
-    COMPILER_DIR = os.path.join("compiler")
+    COMPILER_DIR = os.path.join("/tmp", "compiler")
+    os.makedirs(COMPILER_DIR, exist_ok=True)
+
 
     COMPILER_EXECUTABLE_NAME = "compiler"
     OPTIMIZER_EXECUTABLE_NAME = "optimizer"
@@ -34,6 +36,18 @@ def LLM():
     # ============================================================
     # RUN COMPILER EXECUTABLE TO GENERATE OUTPUT FILE
     # ============================================================
+    import shutil
+
+    # Copy executables from repo to /tmp/compiler if not already there
+    REPO_COMPILER_DIR = os.path.join(os.path.dirname(__file__), "compiler")
+
+    for exe in ["compiler", "optimizer"]:
+        src = os.path.join(REPO_COMPILER_DIR, exe)
+        dst = os.path.join(COMPILER_DIR, exe)
+        if os.path.exists(src) and not os.path.exists(dst):
+            shutil.copy(src, dst)
+            os.chmod(dst, 0o755)  # make executable
+
 
     def run_c_compiler():
         """Run the compiled C optimizer and wait for Output.txt to appear."""
