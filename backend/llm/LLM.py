@@ -351,7 +351,7 @@ Format your output as:
 - 2–4 bullet points only
 Keep the total output under 6 lines (suitable for frontend card view).
 Dont use any emojis.
-Give suggestions under the heading "$Suggestions:$$" and enclose the suggestions with "$$". 
+Give suggestions under the heading "$Suggestions:$" and enclose the suggestions with "$$". 
 Also compulsorily generate your version of the entire optimized three address code with the heading: "$Optimization:$" in the end of the summary.
 All the optimized code must be in newlines. Follow this format under all circumstances.
 """
