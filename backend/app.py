@@ -8,6 +8,10 @@ CORS(app)
 # Path to your compiler folder where source.c should go
 SOURCE_FILE = "backend/compiler/source.c"
 
+@app.route("/")
+def home():
+    return "Flask backend is running successfully!"
+
 @app.route("/run-llm", methods=["POST"])
 def run_llm():
     try:
@@ -47,4 +51,4 @@ def run_llm():
 
 if __name__ == "__main__":
     print("🧠 LLM Flask API running at http://127.0.0.1:5001/run-llm")
-    app.run(host="127.0.0.1", port=5001, debug=True)
+    app.run(host="0.0.0.0", port=10000)
