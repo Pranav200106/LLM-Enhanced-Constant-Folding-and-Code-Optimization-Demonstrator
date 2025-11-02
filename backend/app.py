@@ -6,9 +6,7 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-# Path to your compiler folder where source.c should go
-# Path to your compiler folder where source.c should go
-COMPILER_DIR = "/tmp/compiler"
+COMPILER_DIR = os.path.join(os.path.dirname(__file__), "compiler")
 SOURCE_FILE = os.path.join(COMPILER_DIR, "source.c")
 
 @app.route("/")

@@ -15,7 +15,15 @@ def LLM():
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
     GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
 
-    COMPILER_DIR = os.path.join("/tmp", "compiler")
+    # Use project directory instead of /tmp
+    # Get backend directory (parent of llm directory)
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    COMPILER_DIR = os.path.join(BASE_DIR, "compiler")
+    
+    print(f"📂 Base directory: {BASE_DIR}")
+    print(f"📂 Compiler directory: {COMPILER_DIR}")
+    
+    # Ensure compiler directory exists
     os.makedirs(COMPILER_DIR, exist_ok=True)
 
     COMPILER_EXECUTABLE_NAME = "compiler"
@@ -28,43 +36,49 @@ def LLM():
     OUTPUT_FILE = os.path.join(COMPILER_DIR, "Output.txt")
     SOURCE_FILE = os.path.join(COMPILER_DIR, "source.c")
 
-    # Create llm directory if it doesn't exist
-    LLM_DIR = os.path.join(os.path.dirname(__file__), "..")
-    os.makedirs(os.path.join(LLM_DIR, "llm"), exist_ok=True)
+    # Create llm directory for reports if it doesn't exist
+    LLM_REPORTS_DIR = os.path.join(BASE_DIR, "llm")
+    os.makedirs(LLM_REPORTS_DIR, exist_ok=True)
     
-    REPORT_TEXT = os.path.join(LLM_DIR, "llm", "Gemini_Report.txt")
-    REPORT_JSON = os.path.join(LLM_DIR, "llm", "Gemini_Review.json")
+    REPORT_TEXT = os.path.join(LLM_REPORTS_DIR, "Gemini_Report.txt")
+    REPORT_JSON = os.path.join(LLM_REPORTS_DIR, "Gemini_Review.json")
+
+    # ============================================================
+    # CHECK IF EXECUTABLES EXIST
+    # ============================================================
+    print(f"🔍 Checking for compiler at: {COMPILER_EXECUTABLE}")
+    print(f"   Exists: {os.path.exists(COMPILER_EXECUTABLE)}")
+    
+    print(f"🔍 Checking for optimizer at: {OPTIMIZER_EXECUTABLE}")
+    print(f"   Exists: {os.path.exists(OPTIMIZER_EXECUTABLE)}")
+    
+    # Make executables executable (in case permissions were lost)
+    for exe_path in [COMPILER_EXECUTABLE, OPTIMIZER_EXECUTABLE]:
+        if os.path.exists(exe_path):
+            try:
+                os.chmod(exe_path, 0o755)
+                print(f"✅ Set executable permissions for {exe_path}")
+            except Exception as e:
+                print(f"⚠️ Could not set permissions for {exe_path}: {e}")
 
     # ============================================================
     # RUN COMPILER EXECUTABLE TO GENERATE OUTPUT FILE
     # ============================================================
-    import shutil
-
-    # Copy executables from repo to /tmp/compiler if not already there
-    # Get the directory where LLM.py is located, then go to parent (backend), then to compiler
-    REPO_COMPILER_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "compiler")
-    
-    print(f"📂 Looking for executables in: {REPO_COMPILER_DIR}")
-
-    for exe in ["compiler", "optimizer"]:
-        src = os.path.join(REPO_COMPILER_DIR, exe)
-        dst = os.path.join(COMPILER_DIR, exe)
-        
-        print(f"🔍 Checking if {src} exists: {os.path.exists(src)}")
-        
-        if os.path.exists(src):
-            shutil.copy(src, dst)
-            os.chmod(dst, 0o755)  # make executable
-            print(f"✅ Copied {exe} to {dst}")
-        else:
-            print(f"⚠️ Source executable not found: {src}")
 
     def run_c_compiler():
-        """Run the compiled C optimizer and wait for Output.txt to appear."""
-        print("⚙️ Running C optimizer to generate Output.txt...\n")
+        """Run the compiled C compiler and wait for IR.txt to appear."""
+        print("⚙️ Running C compiler to generate IR.txt...\n")
+
+        if not os.path.exists(COMPILER_EXECUTABLE):
+            print(f"❌ Compiler executable not found: {COMPILER_EXECUTABLE}")
+            return False
+
+        if not os.path.exists(SOURCE_FILE):
+            print(f"❌ Source file not found: {SOURCE_FILE}")
+            return False
 
         try:
-            # Run compiler (update args if needed)
+            # Run compiler
             compiled = subprocess.run(
                 [COMPILER_EXECUTABLE],
                 cwd=COMPILER_DIR,
@@ -75,11 +89,14 @@ def LLM():
 
             print("🔧 Compiler stdout:\n", compiled.stdout)
             print("⚠️ Compiler stderr:\n", compiled.stderr)
+            print(f"🔧 Compiler return code: {compiled.returncode}")
 
-            for _ in range(10):
+            # Wait for IR.txt to appear
+            for i in range(10):
                 if os.path.exists(IR_FILE):
                     print("✅ IR.txt found!")
                     return True
+                print(f"⏳ Waiting for IR.txt... ({i+1}/10)")
                 time.sleep(1)
 
             print("❌ IR.txt not found after running compiler.")
@@ -88,11 +105,24 @@ def LLM():
         except subprocess.TimeoutExpired:
             print("❌ Compiler process timed out.")
             return False
-        except FileNotFoundError:
-            print(f"❌ Compiler executable not found: {os.path.join(COMPILER_DIR, COMPILER_EXECUTABLE_NAME)}")
+        except Exception as e:
+            print(f"❌ Error running compiler: {e}")
+            import traceback
+            traceback.print_exc()
             return False
 
     def run_c_optimizer():
+        """Run the optimizer and wait for Output.txt to appear."""
+        print("⚙️ Running C optimizer to generate Output.txt...\n")
+
+        if not os.path.exists(OPTIMIZER_EXECUTABLE):
+            print(f"❌ Optimizer executable not found: {OPTIMIZER_EXECUTABLE}")
+            return False
+
+        if not os.path.exists(IR_FILE):
+            print(f"❌ IR.txt not found: {IR_FILE}")
+            return False
+
         try:
             result = subprocess.run(
                 [OPTIMIZER_EXECUTABLE],
@@ -102,23 +132,28 @@ def LLM():
                 timeout=45
             )
 
-            print("🔧 Compiler stdout:\n", result.stdout)
-            print("⚠️ Compiler stderr:\n", result.stderr)
+            print("🔧 Optimizer stdout:\n", result.stdout)
+            print("⚠️ Optimizer stderr:\n", result.stderr)
+            print(f"🔧 Optimizer return code: {result.returncode}")
 
-            for _ in range(10):
+            # Wait for Output.txt to appear
+            for i in range(10):
                 if os.path.exists(OUTPUT_FILE):
                     print("✅ Output.txt found!")
                     return True
+                print(f"⏳ Waiting for Output.txt... ({i+1}/10)")
                 time.sleep(1)
 
-            print("❌ Output.txt not found after running compiler.")
+            print("❌ Output.txt not found after running optimizer.")
             return False
 
         except subprocess.TimeoutExpired:
             print("❌ Optimizer process timed out.")
             return False
-        except FileNotFoundError:
-            print(f"❌ Optimizer executable not found: {os.path.join(COMPILER_DIR, OPTIMIZER_EXECUTABLE_NAME)}")
+        except Exception as e:
+            print(f"❌ Error running optimizer: {e}")
+            import traceback
+            traceback.print_exc()
             return False
 
     # ============================================================
@@ -223,33 +258,33 @@ def LLM():
     def review_output_file():
         if not os.path.exists(OUTPUT_FILE):
             print("❌ Output.txt not found! Run your optimizer first.")
-            return
+            return {"success": False, "message": "Output.txt not found"}
 
         with open(OUTPUT_FILE, "r") as f:
             optimized_code = f.read()
 
         prompt = f"""
-    You are an expert compiler engineer reviewing optimized three-address code (TAC).
+You are an expert compiler engineer reviewing optimized three-address code (TAC).
 
-    Analyze the code below and respond briefly:
-    1. Verify if semantics are preserved (no logic change).
-    2. Mention unsafe optimizations, if any.
-    3. Suggest at most 3 further optimizations (clear, one-liners).
-    4. Use short bullet points only — no long explanations.
-    5. End with one summary line:
-    → "✅ Optimization Correct" or "⚠️ Issues Found: <reason>"
+Analyze the code below and respond briefly:
+1. Verify if semantics are preserved (no logic change).
+2. Mention unsafe optimizations, if any.
+3. Suggest at most 3 further optimizations (clear, one-liners).
+4. Use short bullet points only — no long explanations.
+5. End with one summary line:
+→ "✅ Optimization Correct" or "⚠️ Issues Found: <reason>"
 
-    --- Optimized TAC ---
-    {optimized_code}
+--- Optimized TAC ---
+{optimized_code}
 
-    Format your output as:
-    - ✅/⚠️ statements
-    - 2–4 bullet points only
-    Keep the total output under 6 lines (suitable for frontend card view).
-    Dont use any emojis.
-    Also compulsorily generate your version of the optimized three address code with the heading: "$Optimization:$" in the end of the summary.
-    All the optimized code must be in newlines. 
-    """
+Format your output as:
+- ✅/⚠️ statements
+- 2–4 bullet points only
+Keep the total output under 6 lines (suitable for frontend card view).
+Dont use any emojis.
+Also compulsorily generate your version of the optimized three address code with the heading: "$Optimization:$" in the end of the summary.
+All the optimized code must be in newlines. 
+"""
 
         print("🤖 Sending optimized TAC to Gemini...\n")
         review_text, raw_json = call_gemini_api(prompt)
@@ -260,12 +295,14 @@ def LLM():
         summary_info = extract_summary(review_text)
         suggestions = extract_suggestions(review_text)
         optimized_tac = extract_tac_code(review_text)
+        
         # Save plain text
         with open(REPORT_TEXT, "w", encoding="utf-8") as f:
             f.write(review_text)
 
         # Save structured JSON
         structured_output = {
+            "success": True,
             "summary": summary_info["summary"],
             "status": summary_info["status"],
             "suggestions": suggestions,
