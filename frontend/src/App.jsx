@@ -14,7 +14,7 @@ function App() {
   const handleOptimize = async (code) => {
     setLoading(true); // Start spinner
     try {
-      const res = await fetch("http://https://neurofold-j01j.onrender.com/run-llm", {
+      const res = await fetch("https://https://neurofold-j01j.onrender.com/run-llm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code }),
