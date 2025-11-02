@@ -292,13 +292,17 @@ def LLM():
         return {"summary": summary_line, "status": status}
 
     def extract_suggestions(review_text):
-        match = re.search(r"\$Suggestions:\$\$(.*?)\$\$", review_text, re.DOTALL)
+        match = re.search(r"\$Suggestions:\$+\s*(.*?)\s*\$\$", review_text, re.DOTALL)
         if match:
             suggestions_block = match.group(1).strip()
-            # Split into lines and remove any leading/trailing whitespace or bullet points
-            suggestions = [re.sub(r"^\s*[-*•]\s*", "", line).strip() for line in suggestions_block.splitlines() if line.strip()]
+            suggestions = [
+                re.sub(r"^\s*[-*•]\s*", "", line).strip()
+                for line in suggestions_block.splitlines()
+                if line.strip()
+            ]
             return suggestions
         return []
+
 
     def extract_tac_code(review_text):
         """
