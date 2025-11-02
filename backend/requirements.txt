@@ -4,4 +4,3 @@ python-dotenv
 requests
 gunicorn
 google-generativeai
-os
