@@ -86,5 +86,5 @@ def run_llm():
 
 if __name__ == "__main__":
     print("🧠 LLM Flask API running at http://127.0.0.1:5001/run-llm")
-    #app.run(host="0.0.0.0", port=10000)
-    app.run(host="127.0.0.1", port=6000)
+    app.run(host="0.0.0.0", port=10000)
+    #app.run(host="127.0.0.1", port=6000)
