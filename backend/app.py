@@ -33,6 +33,7 @@ def run_llm():
 
         # Return result to frontend
         if isinstance(result, dict):
+            print(result)
             return jsonify(result)
         else:
             return jsonify({

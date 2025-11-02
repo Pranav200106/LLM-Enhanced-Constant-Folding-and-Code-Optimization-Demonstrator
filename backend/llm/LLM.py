@@ -223,7 +223,9 @@ def LLM():
     - ✅/⚠️ statements
     - 2–4 bullet points only
     Keep the total output under 6 lines (suitable for frontend card view).
+    Dont use any emojis.
     Also compulsorily generate your version of the optimized three address code with the heading: "$Optimization:$" in the end of the summary.
+    All the optimized code must be in newlines. 
     """
 
         print("🤖 Sending optimized TAC to Gemini...\n")
@@ -245,7 +247,8 @@ def LLM():
             "status": summary_info["status"],
             "suggestions": suggestions,
             "full_text": review_text,
-            "optimized_code": optimized_tac
+            "optimized_code": optimized_tac,
+            "unoptimized_code": optimized_code
         }
 
         with open(REPORT_JSON, "w", encoding="utf-8") as f:

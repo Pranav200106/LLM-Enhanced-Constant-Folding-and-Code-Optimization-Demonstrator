@@ -2,11 +2,13 @@
   "summary": "\u2705 Optimization Correct",
   "status": "Optimization Correct",
   "suggestions": [
-    "Semantics preserved; no unsafe optimizations.",
-    "**Dead Code Elimination:** Remove all unused temporaries (t0-t12).",
-    "**Redundant Assignment Elimination:** Remove assignments to temporaries whose values are immediately overwritten.",
-    "**Copy Propagation (more aggressive):** Ensure direct constant assignments to variables fully eliminate source temporaries."
+    "Semantics preserved.",
+    "No unsafe optimizations.",
+    "Remove dead temporaries (e.g., t0, t1).",
+    "Eliminate DECLARE statements and assignments for a, b, c, d if not externally observable.",
+    "Remove t13 = CALL , 1 as its result is unused."
   ],
-  "full_text": "\u2705 Optimization Correct\n*   Semantics preserved; no unsafe optimizations.\n*   **Dead Code Elimination:** Remove all unused temporaries (t0-t12).\n*   **Redundant Assignment Elimination:** Remove assignments to temporaries whose values are immediately overwritten.\n*   **Copy Propagation (more aggressive):** Ensure direct constant assignments to variables fully eliminate source temporaries.\n\n$Optimization:$\nFUNCTION main:\n  DECLARE a\n  a = 5\n  DECLARE b\n  b = 10\n  DECLARE c\n  c = 17\n  DECLARE d\n  d = 8\n  RETURN 8\nEND FUNCTION main",
-  "optimized_code": "$\nFUNCTION main:\n  DECLARE a\n  a = 5\n  DECLARE b\n  b = 10\n  DECLARE c\n  c = 17\n  DECLARE d\n  d = 8\n  RETURN 8\nEND FUNCTION main"
+  "full_text": "*   Semantics preserved.\n*   No unsafe optimizations.\n*   Remove dead temporaries (e.g., t0, t1).\n*   Eliminate DECLARE statements and assignments for a, b, c, d if not externally observable.\n*   Remove t13 = CALL , 1 as its result is unused.\n\u2705 Optimization Correct\n\n$Optimization:$\nFUNCTION main:\n  t12 = \"Hello\"\n  PUSH_PARAM t12\n  CALL , 1\n  RETURN 8\nEND FUNCTION main",
+  "optimized_code": "$\nFUNCTION main:\n  t12 = \"Hello\"\n  PUSH_PARAM t12\n  CALL , 1\n  RETURN 8\nEND FUNCTION main",
+  "unoptimized_code": "FUNCTION main:\n  DECLARE a\n  t0 = 5\n  a = 5    ; [OPTIMIZED]\n  DECLARE b\n  t1 = 10\n  b = 10    ; [OPTIMIZED]\n  DECLARE c\n  t2 = 5    ; [OPTIMIZED]\n  t3 = 2\n  t4 = 10    ; [OPTIMIZED]\n  t5 = 10    ; [OPTIMIZED]\n  t6 = 20    ; [OPTIMIZED]\n  t7 = 3\n  t8 = 17    ; [OPTIMIZED]\n  c = 17    ; [OPTIMIZED]\n  DECLARE d\n  t9 = 17    ; [OPTIMIZED]\n  t10 = 2\n  t11 = 8    ; [OPTIMIZED]\n  d = 8    ; [OPTIMIZED]\n  t12 = \"Hello\"\n  PUSH_PARAM t12\n  t13 = CALL , 1\n  t14 = 8    ; [OPTIMIZED]\n  RETURN 8\nEND FUNCTION main\n\n\n"
 }

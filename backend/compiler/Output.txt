@@ -1,5 +1,3 @@
-=== OPTIMIZED THREE-ADDRESS CODE (IR) ===
-
 FUNCTION main:
   DECLARE a
   t0 = 5
@@ -21,7 +19,10 @@ FUNCTION main:
   t10 = 2
   t11 = 8    ; [OPTIMIZED]
   d = 8    ; [OPTIMIZED]
-  t12 = 8    ; [OPTIMIZED]
+  t12 = "Hello"
+  PUSH_PARAM t12
+  t13 = CALL , 1
+  t14 = 8    ; [OPTIMIZED]
   RETURN 8
 END FUNCTION main
 

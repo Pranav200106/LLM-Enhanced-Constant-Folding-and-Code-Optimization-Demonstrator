@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: corporate --default, business --prefersdark, business, corporate;
+}
+textarea {
+  transition: height 0.1s ease-out;
+}

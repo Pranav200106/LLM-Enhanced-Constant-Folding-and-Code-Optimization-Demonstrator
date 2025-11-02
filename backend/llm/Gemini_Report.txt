@@ -1,18 +1,14 @@
+*   Semantics preserved.
+*   No unsafe optimizations.
+*   Remove dead temporaries (e.g., t0, t1).
+*   Eliminate DECLARE statements and assignments for a, b, c, d if not externally observable.
+*   Remove t13 = CALL , 1 as its result is unused.
 ✅ Optimization Correct
-*   Semantics preserved; no unsafe optimizations.
-*   **Dead Code Elimination:** Remove all unused temporaries (t0-t12).
-*   **Redundant Assignment Elimination:** Remove assignments to temporaries whose values are immediately overwritten.
-*   **Copy Propagation (more aggressive):** Ensure direct constant assignments to variables fully eliminate source temporaries.
 
 $Optimization:$
 FUNCTION main:
-  DECLARE a
-  a = 5
-  DECLARE b
-  b = 10
-  DECLARE c
-  c = 17
-  DECLARE d
-  d = 8
+  t12 = "Hello"
+  PUSH_PARAM t12
+  CALL , 1
   RETURN 8
 END FUNCTION main

@@ -631,9 +631,7 @@ bool writeIRToFile(const char* filename, IRCode* ir) {
         printf("Error: Cannot create output file '%s'\n", filename);
         return false;
     }
-    
-    fprintf(fp, "=== OPTIMIZED THREE-ADDRESS CODE (IR) ===\n\n");
-    
+        
     for (int i = 0; i < ir->count; i++) {
         printIRInstruction(fp, &ir->instructions[i]);
     }

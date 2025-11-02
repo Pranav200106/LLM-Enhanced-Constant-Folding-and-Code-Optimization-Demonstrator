@@ -19,7 +19,10 @@ FUNCTION main:
   t10 = 2
   t11 = t9 / t10
   d = t11
-  t12 = d
-  RETURN t12
+  t12 = "Hello"
+  PUSH_PARAM t12
+  t13 = CALL printf, 1
+  t14 = d
+  RETURN t14
 END FUNCTION main
 
