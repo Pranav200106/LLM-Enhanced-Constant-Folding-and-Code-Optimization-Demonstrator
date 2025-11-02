@@ -42,7 +42,6 @@ def run_llm():
         # Write to source.c with explicit flush and sync
         print(f"📝 Writing source code to {SOURCE_FILE}")
         print(f"📄 Source code length: {len(source_code)} characters")
-        print(f"📄 First 100 chars: {source_code[:100]}")
         
         with open(SOURCE_FILE, "w", encoding="utf-8") as f:
             f.write(source_code)
