@@ -162,6 +162,7 @@ export default function CodeEditor({ code = "", setCode }) {
           whiteSpace: "pre",
           tabSize: 2,
           lineHeight: "1.5rem",
+          color: code.trim() === "" ? "#9CA3AF" : "transparent",
         }}
         placeholder="// Write your C/C++ code here..."
       />
