@@ -292,9 +292,13 @@ def LLM():
         return {"summary": summary_line, "status": status}
 
     def extract_suggestions(review_text):
-        # Exclude lines that are status reports (e.g., about semantics or safety)
-        # and only capture actionable optimization suggestions.
-        return re.findall(r"[-*•]\s+(?!.*(?:semantics|unsafe|preserved|correct|issue))(.*)", review_text, re.IGNORECASE)
+        match = re.search(r"\$Suggestions:\$\$(.*?)\$\$", review_text, re.DOTALL)
+        if match:
+            suggestions_block = match.group(1).strip()
+            # Split into lines and remove any leading/trailing whitespace or bullet points
+            suggestions = [re.sub(r"^\s*[-*•]\s*", "", line).strip() for line in suggestions_block.splitlines() if line.strip()]
+            return suggestions
+        return []
 
     def extract_tac_code(review_text):
         """
@@ -347,7 +351,7 @@ Format your output as:
 - 2–4 bullet points only
 Keep the total output under 6 lines (suitable for frontend card view).
 Dont use any emojis.
-Only give meaningful suggestions.
+Give suggestions under the heading "$Suggestions:$$" and enclose the suggestions with "$$". 
 Also compulsorily generate your version of the entire optimized three address code with the heading: "$Optimization:$" in the end of the summary.
 All the optimized code must be in newlines. Follow this format under all circumstances.
 """

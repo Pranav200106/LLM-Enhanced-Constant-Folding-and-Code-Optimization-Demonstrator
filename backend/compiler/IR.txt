@@ -1,22 +1,74 @@
+FUNCTION factorial:
+  PARAM n
+  DECLARE result
+  DECLARE i
+  DECLARE temp
+  DECLARE one
+  DECLARE zero
+  t0 = 1
+  one = t0
+  t1 = 0
+  zero = t1
+  t2 = one
+  t3 = zero
+  t4 = t2 + t3
+  result = t4
+  t5 = n
+  i = t5
+  t6 = n
+  t7 = one
+  t8 = zero
+  t9 = t7 + t8
+  t10 = t6 <= t9
+  IF_FALSE t10 GOTO L0
+  t11 = result
+  RETURN t11
+  GOTO L1
+L0:
+L1:
+L2:
+  t12 = i
+  t13 = one
+  t14 = one
+  t15 = t13 * t14
+  t16 = t12 > t15
+  IF_FALSE t16 GOTO L3
+  t17 = result
+  t18 = i
+  t19 = t17 * t18
+  temp = t19
+  t20 = temp
+  t21 = zero
+  t22 = t20 + t21
+  result = t22
+  t23 = i
+  t24 = one
+  t25 = zero
+  t26 = t24 + t25
+  t27 = t23 - t26
+  i = t27
+  GOTO L2
+L3:
+  t28 = result
+  RETURN t28
+END FUNCTION factorial
+
 FUNCTION main:
   DECLARE x
-  t0 = 2
-  x = t0
   DECLARE y
-  t1 = 3
-  y = t1
-  DECLARE z
-  t2 = x
-  t3 = y
-  t4 = t2 + t3
-  t5 = 5
-  t6 = t4 * t5
-  t7 = y
-  t8 = 2
-  t9 = t7 / t8
-  t10 = t6 - t9
-  z = t10
-  t11 = z
-  RETURN t11
+  t29 = 2
+  t30 = 3
+  t31 = t29 + t30
+  t32 = 0
+  t33 = t31 + t32
+  x = t33
+  t34 = x
+  PUSH_PARAM t34
+  t35 = CALL factorial, 1
+  y = t35
+  t36 = y
+  t37 = 0
+  t38 = t36 + t37
+  RETURN t38
 END FUNCTION main
 

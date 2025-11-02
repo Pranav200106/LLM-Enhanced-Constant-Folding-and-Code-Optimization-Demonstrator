@@ -1,23 +1,76 @@
+FUNCTION factorial:
+  PUSH_PARAM n
+  DECLARE result
+  DECLARE i
+  DECLARE temp
+  DECLARE one
+  DECLARE zero
+  t0 = 1
+  one = 1    ; [OPTIMIZED]
+  t1 = 0
+  zero = 0    ; [OPTIMIZED]
+  t2 = 1    ; [OPTIMIZED]
+  t3 = 0    ; [OPTIMIZED]
+  t4 = 1    ; [OPTIMIZED]
+  result = 1    ; [OPTIMIZED]
+  t5 = n
+  i = t5
+  t6 = n
+  t7 = 1    ; [OPTIMIZED]
+  t8 = 0    ; [OPTIMIZED]
+  t9 = 1    ; [OPTIMIZED]
+  t10 = t6 <= 1
+  IF_FALSE t10 GOTO L0
+  t11 = 1    ; [OPTIMIZED]
+  RETURN 1
+  GOTO L1
+L0:
+L1:
+L2:
+  t12 = i
+  t13 = 1    ; [OPTIMIZED]
+  t14 = 1    ; [OPTIMIZED]
+  t15 = 1    ; [OPTIMIZED]
+  t16 = t12 > 1
+  IF_FALSE t16 GOTO L3
+  t17 = 1    ; [OPTIMIZED]
+  t18 = i
+  t19 = 1 * t18
+  temp = t19
+  t20 = temp
+  t21 = 0    ; [OPTIMIZED]
+  t22 = t20 + 0
+  result = t22
+  t23 = i
+  t24 = 1    ; [OPTIMIZED]
+  t25 = 0    ; [OPTIMIZED]
+  t26 = 1    ; [OPTIMIZED]
+  t27 = t23 - 1
+  i = t27
+  GOTO L2
+L3:
+  t28 = result
+  RETURN t28
+END FUNCTION factorial
+
+
 FUNCTION main:
   DECLARE x
-  t0 = 2
-  x = 2    ; [OPTIMIZED]
   DECLARE y
-  t1 = 3
-  y = 3    ; [OPTIMIZED]
-  DECLARE z
-  t2 = 2    ; [OPTIMIZED]
-  t3 = 3    ; [OPTIMIZED]
-  t4 = 5    ; [OPTIMIZED]
-  t5 = 5
-  t6 = 25    ; [OPTIMIZED]
-  t7 = 3    ; [OPTIMIZED]
-  t8 = 2
-  t9 = 1    ; [OPTIMIZED]
-  t10 = 24    ; [OPTIMIZED]
-  z = 24    ; [OPTIMIZED]
-  t11 = 24    ; [OPTIMIZED]
-  RETURN 24
+  t29 = 2
+  t30 = 3
+  t31 = 5    ; [OPTIMIZED]
+  t32 = 0
+  t33 = 5    ; [OPTIMIZED]
+  x = 5    ; [OPTIMIZED]
+  t34 = 5    ; [OPTIMIZED]
+  PUSH_PARAM 5
+  t35 = CALL , 1
+  y = t35
+  t36 = y
+  t37 = 0
+  t38 = t36 + 0
+  RETURN t38
 END FUNCTION main
 
 

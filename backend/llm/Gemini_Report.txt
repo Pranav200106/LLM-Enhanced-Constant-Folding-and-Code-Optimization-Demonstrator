@@ -1,12 +1,38 @@
-✅ Optimization Correct
-- Semantics preserved; all constant folding and copy propagation are correct.
-- No unsafe optimizations identified (assuming integer arithmetic for division).
-- Suggest: Eliminate all temporary variables (`t0` through `t11`).
-- Suggest: Eliminate `DECLARE x`, `DECLARE y`, `DECLARE z` as they are unused.
-- Suggest: Reduce function body to `RETURN 24`.
-✅ Optimization Correct
+⚠️ Issues Found: Semantic error in factorial logic.
+
+*   Factorial loop logic `result = i` is semantically incorrect; it should be `result = result * i`.
+*   Excessive redundant temporary assignments (e.g., `t0=1`, `t1=0`, `t2=1`, etc.).
+*   Identity operations (`1 * X`, `X + 0`) are not fully optimized.
+
+$Suggestions:$$
+*   Fix factorial loop logic to `result = result * i`.
+*   Apply aggressive constant folding and dead code elimination.
+*   Perform strength reduction for identity operations (`1 * X`, `X + 0`).
+$$
 
 $Optimization:$
+FUNCTION factorial:
+  PUSH_PARAM n
+  DECLARE result
+  DECLARE i
+  result = 1
+  i = n
+  t0 = n <= 1
+  IF_FALSE t0 GOTO L_loop_start
+  RETURN 1
+L_loop_start:
+  t1 = i > 1
+  IF_FALSE t1 GOTO L_loop_end
+  result = result * i
+  i = i - 1
+  GOTO L_loop_start
+L_loop_end:
+  RETURN result
+END FUNCTION factorial
+
 FUNCTION main:
-  RETURN 24
+  DECLARE y
+  PUSH_PARAM 5
+  y = CALL , 1
+  RETURN y
 END FUNCTION main
