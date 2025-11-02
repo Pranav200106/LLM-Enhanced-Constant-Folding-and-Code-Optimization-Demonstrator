@@ -26,11 +26,44 @@ def run_llm():
         if not source_code.strip():
             return jsonify({"success": False, "message": "No source code provided."}), 400
 
-        # Write to source.c
-        print(source_code)
+        # Ensure compiler directory exists
+        os.makedirs(COMPILER_DIR, exist_ok=True)
+        
+        # Remove old files to ensure fresh compilation
+        old_files = [SOURCE_FILE, 
+                     os.path.join(COMPILER_DIR, "IR.txt"),
+                     os.path.join(COMPILER_DIR, "Output.txt")]
+        
+        for old_file in old_files:
+            if os.path.exists(old_file):
+                os.remove(old_file)
+                print(f"🗑️ Removed old file: {old_file}")
+
+        # Write to source.c with explicit flush and sync
+        print(f"📝 Writing source code to {SOURCE_FILE}")
+        print(f"📄 Source code length: {len(source_code)} characters")
+        print(f"📄 First 100 chars: {source_code[:100]}")
+        
         with open(SOURCE_FILE, "w", encoding="utf-8") as f:
             f.write(source_code)
-        print(f"📝 Wrote source code to {SOURCE_FILE}")
+            f.flush()  # Force write to disk
+            os.fsync(f.fileno())  # Ensure OS writes to disk
+        
+        # Verify the file was written correctly
+        if os.path.exists(SOURCE_FILE):
+            with open(SOURCE_FILE, "r", encoding="utf-8") as f:
+                written_content = f.read()
+            print(f"✅ File written successfully. Size: {len(written_content)} bytes")
+            print(f"✅ First 100 chars of written file: {written_content[:100]}")
+            
+            # Check if content matches
+            if written_content == source_code:
+                print("✅ Content verification successful!")
+            else:
+                print("⚠️ Content mismatch detected!")
+        else:
+            print(f"❌ File not found after writing: {SOURCE_FILE}")
+            return jsonify({"success": False, "message": "Failed to write source file"}), 500
 
         # Run the full LLM pipeline
         print("🚀 Running LLM review pipeline...")
@@ -48,7 +81,9 @@ def run_llm():
 
     except Exception as e:
         print(f"❌ Error in /run-llm: {e}")
-        return jsonify({"message": f"Error: {e}", "success": False}), 500
+        import traceback
+        traceback.print_exc()
+        return jsonify({"message": f"Error: {str(e)}", "success": False}), 500
 
 
 if __name__ == "__main__":
