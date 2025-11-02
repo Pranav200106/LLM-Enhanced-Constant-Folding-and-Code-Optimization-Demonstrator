@@ -27,6 +27,7 @@ def run_llm():
             return jsonify({"success": False, "message": "No source code provided."}), 400
 
         # Write to source.c
+        print(source_code)
         with open(SOURCE_FILE, "w", encoding="utf-8") as f:
             f.write(source_code)
         print(f"📝 Wrote source code to {SOURCE_FILE}")

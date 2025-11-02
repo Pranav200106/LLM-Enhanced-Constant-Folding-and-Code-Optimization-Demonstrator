@@ -1,15 +1,7 @@
 import { useState, useRef } from "react";
 
 function CodeInput({ onOptimize }) {
-  const [code, setCode] = useState(
-    `int main() {
-    int a = 5;
-    int b = 10;
-    int c = a * 2 + b - 3;
-    int d = c / 2;
-    return d;
-}`
-  );
+  const [code, setCode] = useState("");
 
   const [fileName, setFileName] = useState("");
   const textareaRef = useRef(null);
@@ -24,6 +16,7 @@ function CodeInput({ onOptimize }) {
     reader.onload = (event) => {
       const content = event.target.result;
       setCode(content);
+      console.log(content)
       adjustTextareaHeight(content);
     };
     reader.readAsText(file);
@@ -82,21 +75,23 @@ function CodeInput({ onOptimize }) {
           aria-label="File Upload"
         />
         <div className="tab-content border-base-300 bg-base-100 p-10 flex-col">
-          <h2 className="text-lg font-semibold mb-4">Upload Your Source File</h2>
-        <div>
- <input
-                type="file"
-                accept=".c,.cpp,.txt"
-                className="file-input file-input-bordered w-full max-w-xs"
-                onChange={handleFileUpload}
+          <h2 className="text-lg font-semibold mb-4">
+            Upload Your Source File
+          </h2>
+          <div>
+            <input
+              type="file"
+              accept=".c,.cpp,.txt"
+              className="file-input file-input-bordered w-full max-w-xs"
+              onChange={handleFileUpload}
             />
 
             {fileName && (
-                <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-2 text-sm text-gray-500">
                 Loaded file: <strong>{fileName}</strong>
-                </p>
+              </p>
             )}
-        </div>
+          </div>
 
           <button
             className="btn btn-primary mt-4"

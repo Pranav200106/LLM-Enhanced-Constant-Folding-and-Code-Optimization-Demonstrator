@@ -9,7 +9,7 @@ function App() {
   const [status, setStatus] = useState("");
   const [unOptimizedCode, setUnOptimizedCode] = useState("");
   const [fullText, setFullText] = useState("");
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
 
   const handleOptimize = async (code) => {
     setLoading(true); // Start spinner
@@ -36,7 +36,7 @@ function App() {
       setOptimizationLog([]);
       setStatus("Error");
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -49,7 +49,7 @@ function App() {
           optimizedCode={optimizedCode}
           optimizationLog={optimizationLog}
           status={status}
-          loading={loading} 
+          loading={loading}
           unOptimizedCode={unOptimizedCode}
         />
       </div>

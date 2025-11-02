@@ -1,7 +1,43 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-  themes: corporate --default, business --prefersdark, business, corporate;
+  themes: corporate --default, latenotyet --prefersdark, latenotyet, corporate;
 }
+
+@plugin "daisyui/theme" {
+  name: "latenotyet";
+  default: false;
+  prefersdark: false;
+  color-scheme: "dark";
+  --color-base-100: oklch(14% 0 0);
+  --color-base-200: oklch(20% 0 0);
+  --color-base-300: oklch(26% 0 0);
+  --color-base-content: oklch(97% 0 0);
+  --color-primary: oklch(84% 0.143 164.978);
+  --color-primary-content: oklch(26% 0.051 172.552);
+  --color-secondary: oklch(86% 0.022 252.894);
+  --color-secondary-content: oklch(12% 0.042 264.695);
+  --color-accent: oklch(81% 0.111 293.571);
+  --color-accent-content: oklch(28% 0.141 291.089);
+  --color-neutral: oklch(37% 0 0);
+  --color-neutral-content: oklch(98% 0 0);
+  --color-info: oklch(54% 0.245 262.881);
+  --color-info-content: oklch(97% 0.014 254.604);
+  --color-success: oklch(60% 0.118 184.704);
+  --color-success-content: oklch(98% 0.014 180.72);
+  --color-warning: oklch(64% 0.222 41.116);
+  --color-warning-content: oklch(98% 0.016 73.684);
+  --color-error: oklch(58% 0.253 17.585);
+  --color-error-content: oklch(96% 0.015 12.422);
+  --radius-selector: 0rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 1;
+}
+
 textarea {
   transition: height 0.1s ease-out;
 }
