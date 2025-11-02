@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import CodeEditor from "./CodeEditor";
 
 function CodeInput({ onOptimize }) {
   const [code, setCode] = useState("");
@@ -60,14 +61,8 @@ function CodeInput({ onOptimize }) {
         />
         <div className="tab-content border-base-300 bg-base-100 p-10">
           <h2 className="text-lg font-semibold mb-2">Input Code</h2>
-          <textarea
-            ref={textareaRef}
-            rows={8}
-            className="textarea textarea-bordered w-full font-mono rounded-lg"
-            value={code}
-            placeholder="Paste your C code here..."
-            onChange={handleInput}
-          />
+          <CodeEditor code={code} setCode={setCode}></CodeEditor>
+
 
           <div className="flex flex-wrap gap-3 mt-4">
             <button className="btn btn-primary" onClick={() => onOptimize(code)}>
