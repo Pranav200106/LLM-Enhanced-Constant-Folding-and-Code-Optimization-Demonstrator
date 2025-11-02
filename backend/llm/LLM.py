@@ -157,10 +157,21 @@ def LLM():
             return False
 
     # ============================================================
-    # GEMINI API CALL
+    # GEMINI API CALL (FIXED WITH TIMEOUT & ERROR HANDLING)
     # ============================================================
 
-    def call_gemini_api(prompt, retries=5, delay=5):
+    def call_gemini_api(prompt, retries=3, delay=3):
+        """
+        Call Gemini API with proper timeout and error handling.
+        
+        Args:
+            prompt: The text prompt to send
+            retries: Number of retry attempts
+            delay: Initial delay between retries (doubles each time)
+        
+        Returns:
+            Tuple of (review_text, raw_json) or raises exception
+        """
         headers = {
             "Content-Type": "application/json",
             "x-goog-api-key": GEMINI_API_KEY
@@ -175,37 +186,89 @@ def LLM():
         }
 
         for attempt in range(1, retries + 1):
-            response = requests.post(GEMINI_ENDPOINT, headers=headers, json=body)
+            try:
+                print(f"🌐 Calling Gemini API (attempt {attempt}/{retries})...")
+                
+                # CRITICAL FIX: Add timeout parameter to prevent hanging
+                response = requests.post(
+                    GEMINI_ENDPOINT, 
+                    headers=headers, 
+                    json=body,
+                    timeout=60  # 60 second timeout for API call
+                )
 
-            if response.status_code == 200:
-                data = response.json()
-                try:
-                    candidates = data.get("candidates", [])
-                    if not candidates:
-                        return "⚠️ No response candidates found.", data
+                if response.status_code == 200:
+                    data = response.json()
+                    try:
+                        candidates = data.get("candidates", [])
+                        if not candidates:
+                            return "⚠️ No response candidates found.", data
 
-                    content = candidates[0].get("content", {})
-                    parts = content.get("parts", [])
-                    all_text = [p["text"] for p in parts if "text" in p]
+                        content = candidates[0].get("content", {})
+                        parts = content.get("parts", [])
+                        all_text = [p["text"] for p in parts if "text" in p]
 
-                    if not all_text and "output_text" in candidates[0]:
-                        all_text.append(candidates[0]["output_text"])
+                        if not all_text and "output_text" in candidates[0]:
+                            all_text.append(candidates[0]["output_text"])
 
-                    final_text = "\n".join(all_text) if all_text else "⚠️ Gemini returned no readable text."
-                    return final_text, data
+                        final_text = "\n".join(all_text) if all_text else "⚠️ Gemini returned no readable text."
+                        print("✅ Gemini API call successful!")
+                        return final_text, data
 
-                except Exception as e:
-                    return f"⚠️ Parsing error: {e}\nRaw data:\n{json.dumps(data, indent=2)}", data
+                    except Exception as e:
+                        error_msg = f"⚠️ Parsing error: {e}\nRaw data:\n{json.dumps(data, indent=2)}"
+                        print(error_msg)
+                        return error_msg, data
 
-            elif response.status_code in (429, 503):
-                print(f"⚠️ Gemini busy (status {response.status_code}). Retrying in {delay}s... ({attempt}/{retries})")
-                time.sleep(delay)
-                delay *= 2
-                continue
-            else:
-                raise Exception(f"Gemini API Error {response.status_code}: {response.text}")
+                elif response.status_code in (429, 503):
+                    print(f"⚠️ Gemini busy (status {response.status_code}). Retrying in {delay}s... ({attempt}/{retries})")
+                    if attempt < retries:
+                        time.sleep(delay)
+                        delay *= 2
+                        continue
+                    else:
+                        raise Exception(f"Gemini API unavailable after {retries} retries (status {response.status_code})")
+                
+                elif response.status_code == 401:
+                    raise Exception("Gemini API Error 401: Invalid API key. Check your GEMINI_API_KEY.")
+                
+                elif response.status_code == 403:
+                    raise Exception("Gemini API Error 403: Access forbidden. Check API key permissions.")
+                
+                else:
+                    raise Exception(f"Gemini API Error {response.status_code}: {response.text}")
 
-        raise Exception("Gemini API unavailable after several retries.")
+            except requests.exceptions.Timeout:
+                print(f"⚠️ Gemini API request timed out (attempt {attempt}/{retries})")
+                if attempt < retries:
+                    print(f"   Retrying in {delay}s...")
+                    time.sleep(delay)
+                    delay *= 2
+                    continue
+                else:
+                    raise Exception("Gemini API timed out after multiple attempts. Try again later.")
+            
+            except requests.exceptions.ConnectionError as e:
+                print(f"⚠️ Connection error to Gemini API (attempt {attempt}/{retries}): {e}")
+                if attempt < retries:
+                    print(f"   Retrying in {delay}s...")
+                    time.sleep(delay)
+                    delay *= 2
+                    continue
+                else:
+                    raise Exception("Cannot connect to Gemini API. Check your internet connection.")
+            
+            except requests.exceptions.RequestException as e:
+                print(f"⚠️ Request error (attempt {attempt}/{retries}): {e}")
+                if attempt < retries:
+                    print(f"   Retrying in {delay}s...")
+                    time.sleep(delay)
+                    delay *= 2
+                    continue
+                else:
+                    raise Exception(f"Gemini API request failed: {e}")
+
+        raise Exception("Gemini API unavailable after all retry attempts.")
 
     # ============================================================
     # PARSING HELPERS
@@ -252,7 +315,7 @@ def LLM():
 
 
     # ============================================================
-    # GEMINI REVIEW FUNCTION
+    # GEMINI REVIEW FUNCTION (WITH FALLBACK)
     # ============================================================
 
     def review_output_file():
@@ -286,36 +349,64 @@ Also compulsorily generate your version of the entire optimized three address co
 All the optimized code must be in newlines. Follow this format under all circumstances.
 """
 
-        print("🤖 Sending optimized TAC to Gemini...\n")
-        review_text, raw_json = call_gemini_api(prompt)
+        try:
+            print("🤖 Sending optimized TAC to Gemini...\n")
+            review_text, raw_json = call_gemini_api(prompt)
 
-        print("\n=== Gemini Review ===\n")
-        print(review_text)
+            print("\n=== Gemini Review ===\n")
+            print(review_text)
 
-        summary_info = extract_summary(review_text)
-        suggestions = extract_suggestions(review_text)
-        optimized_tac = extract_tac_code(review_text)
-        
-        # Save plain text
-        with open(REPORT_TEXT, "w", encoding="utf-8") as f:
-            f.write(review_text)
+            summary_info = extract_summary(review_text)
+            suggestions = extract_suggestions(review_text)
+            optimized_tac = extract_tac_code(review_text)
+            
+            # Save plain text
+            with open(REPORT_TEXT, "w", encoding="utf-8") as f:
+                f.write(review_text)
 
-        # Save structured JSON
-        structured_output = {
-            "success": True,
-            "summary": summary_info["summary"],
-            "status": summary_info["status"],
-            "suggestions": suggestions,
-            "full_text": review_text,
-            "optimized_code": optimized_tac,
-            "unoptimized_code": optimized_code
-        }
+            # Save structured JSON
+            structured_output = {
+                "success": True,
+                "summary": summary_info["summary"],
+                "status": summary_info["status"],
+                "suggestions": suggestions,
+                "full_text": review_text,
+                "optimized_code": optimized_tac,
+                "unoptimized_code": optimized_code
+            }
 
-        with open(REPORT_JSON, "w", encoding="utf-8") as f:
-            json.dump(structured_output, f, indent=2)
+            with open(REPORT_JSON, "w", encoding="utf-8") as f:
+                json.dump(structured_output, f, indent=2)
 
-        print(f"📦 JSON review saved to {REPORT_JSON}")
-        return structured_output
+            print(f"📦 JSON review saved to {REPORT_JSON}")
+            return structured_output
+
+        except Exception as e:
+            # Fallback response if Gemini fails
+            error_msg = f"Gemini API error: {str(e)}"
+            print(f"\n❌ {error_msg}")
+            print("📝 Generating fallback response...\n")
+            
+            fallback_response = {
+                "success": False,
+                "summary": "⚠️ Gemini API unavailable - showing optimized code only",
+                "status": "API Error",
+                "suggestions": [
+                    "Gemini API is currently unavailable",
+                    "The optimization was completed successfully",
+                    "Review the optimized code manually"
+                ],
+                "full_text": f"Gemini API Error: {error_msg}\n\nOptimized code generated successfully but could not be reviewed.",
+                "optimized_code": optimized_code,
+                "unoptimized_code": optimized_code,
+                "error": error_msg
+            }
+            
+            # Save fallback response
+            with open(REPORT_JSON, "w", encoding="utf-8") as f:
+                json.dump(fallback_response, f, indent=2)
+            
+            return fallback_response
 
     # ============================================================
     # MAIN EXECUTION LOGIC
