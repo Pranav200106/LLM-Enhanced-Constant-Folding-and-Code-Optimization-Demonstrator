@@ -1,9 +1,18 @@
-*   ⚠️ Issues Found: Uninitialized variables and dead code.
-*   Semantics not preserved: `t1` and `t4` are used uninitialized, leading to undefined behavior.
-*   Further: Eliminate dead code: `t0`, `t2`, `t3` assignments and `PUSH_PARAM t1`.
-*   Further: Resolve missing function name in `CALL` (or remove if unused).
+✅ Optimization Correct
+*   Semantics preserved; no unsafe optimizations.
+*   **Dead Code Elimination:** Remove all unused temporaries (t0-t12).
+*   **Redundant Assignment Elimination:** Remove assignments to temporaries whose values are immediately overwritten.
+*   **Copy Propagation (more aggressive):** Ensure direct constant assignments to variables fully eliminate source temporaries.
 
---- Optimization ---
+$Optimization:$
 FUNCTION main:
-  RETURN 0
+  DECLARE a
+  a = 5
+  DECLARE b
+  b = 10
+  DECLARE c
+  c = 17
+  DECLARE d
+  d = 8
+  RETURN 8
 END FUNCTION main

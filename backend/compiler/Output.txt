@@ -1,11 +1,28 @@
 === OPTIMIZED THREE-ADDRESS CODE (IR) ===
 
 FUNCTION main:
-  t0 = "Hello"
-  PUSH_PARAM t1
-  t2 = CALL , 1
-  t3 = 1
-  RETURN t4
+  DECLARE a
+  t0 = 5
+  a = 5    ; [OPTIMIZED]
+  DECLARE b
+  t1 = 10
+  b = 10    ; [OPTIMIZED]
+  DECLARE c
+  t2 = 5    ; [OPTIMIZED]
+  t3 = 2
+  t4 = 10    ; [OPTIMIZED]
+  t5 = 10    ; [OPTIMIZED]
+  t6 = 20    ; [OPTIMIZED]
+  t7 = 3
+  t8 = 17    ; [OPTIMIZED]
+  c = 17    ; [OPTIMIZED]
+  DECLARE d
+  t9 = 17    ; [OPTIMIZED]
+  t10 = 2
+  t11 = 8    ; [OPTIMIZED]
+  d = 8    ; [OPTIMIZED]
+  t12 = 8    ; [OPTIMIZED]
+  RETURN 8
 END FUNCTION main
 
 

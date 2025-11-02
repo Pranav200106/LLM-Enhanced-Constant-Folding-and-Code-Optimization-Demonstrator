@@ -282,9 +282,9 @@ bool match(Parser* p, TokenType type) {
 
 bool expect(Parser* p, TokenType type) {
     if (!match(p, type)) {
-        printf("Parse error at line %d: expected token type %d, got %d\n", 
-               p->currentToken.line, type, p->currentToken.type);
-        return false;
+        printf("Parse error at line %d col %d: expected token type %d, got %d ('%s')\n", 
+               p->currentToken.line, p->currentToken.column, type, p->currentToken.type, p->currentToken.value);
+        exit(1); // Exit on parse error to prevent infinite loops
     }
     advance(p);
     return true;
@@ -722,15 +722,18 @@ char* newLabel() {
     return label;
 }
 
-void generateIR(ASTNode* node, FILE *fptr) {
-    if (!node) return;
+// Modified signature - returns the temp variable used
+char* generateIR(ASTNode* node, FILE *fptr) {
+    if (!node) return NULL;
+    
+    char* temp = NULL;
     
     switch (node->type) {
         case NODE_PROGRAM:
             for (int i = 0; i < node->childCount; i++) {
                 generateIR(node->children[i], fptr);
             }
-            break;
+            return NULL;
             
         case NODE_FUNCTION:
             fprintf(fptr, "FUNCTION %s:\n", node->value);
@@ -739,50 +742,45 @@ void generateIR(ASTNode* node, FILE *fptr) {
             }
             generateIR(node->left, fptr);
             fprintf(fptr, "END FUNCTION %s\n\n", node->value);
-            break;
+            return NULL;
             
         case NODE_BLOCK:
             for (int i = 0; i < node->childCount; i++) {
                 generateIR(node->children[i], fptr);
             }
-            break;
+            return NULL;
             
         case NODE_VAR_DECL:
             fprintf(fptr, "  DECLARE %s\n", node->value);
             if (node->right) {
-                generateIR(node->right, fptr);
-                char* temp = newTemp();
+                temp = generateIR(node->right, fptr);  // Get the temp from expression
                 fprintf(fptr, "  %s = %s\n", node->value, temp);
             }
-            break;
+            return NULL;
             
-        case NODE_ASSIGN:
-            generateIR(node->right, fptr);
-            char* assignTemp = newTemp();
-            fprintf(fptr, "  %s = %s\n", node->left->value, assignTemp);
-            break;
+        case NODE_ASSIGN: {
+            temp = generateIR(node->right, fptr);  // Get temp from RHS
+            fprintf(fptr, "  %s = %s\n", node->left->value, temp);
+            return NULL;
+        }
             
         case NODE_BINARY_OP: {
-            generateIR(node->left, fptr);
-            char* leftTemp = newTemp();
-            generateIR(node->right, fptr);
-            char* rightTemp = newTemp();
+            char* leftTemp = generateIR(node->left, fptr);
+            char* rightTemp = generateIR(node->right, fptr);
             char* resultTemp = newTemp();
             fprintf(fptr, "  %s = %s %s %s\n", resultTemp, leftTemp, node->value, rightTemp);
-            break;
+            return resultTemp;  // Return the result temp
         }
             
         case NODE_UNARY_OP: {
-            generateIR(node->left, fptr);
-            char* operandTemp = newTemp();
+            char* operandTemp = generateIR(node->left, fptr);
             char* resultTemp = newTemp();
             fprintf(fptr, "  %s = %s%s\n", resultTemp, node->value, operandTemp);
-            break;
+            return resultTemp;
         }
             
         case NODE_IF: {
-            generateIR(node->left, fptr);
-            char* condTemp = newTemp();
+            char* condTemp = generateIR(node->left, fptr);
             char* elseLabel = newLabel();
             char* endLabel = newLabel();
             
@@ -792,7 +790,7 @@ void generateIR(ASTNode* node, FILE *fptr) {
             fprintf(fptr, "%s:\n", elseLabel);
             if (node->extra) generateIR(node->extra, fptr);
             fprintf(fptr, "%s:\n", endLabel);
-            break;
+            return NULL;
         }
             
         case NODE_WHILE: {
@@ -800,13 +798,12 @@ void generateIR(ASTNode* node, FILE *fptr) {
             char* endLabel = newLabel();
             
             fprintf(fptr, "%s:\n", startLabel);
-            generateIR(node->left, fptr);
-            char* condTemp = newTemp();
+            char* condTemp = generateIR(node->left, fptr);
             fprintf(fptr, "  IF_FALSE %s GOTO %s\n", condTemp, endLabel);
             generateIR(node->right, fptr);
             fprintf(fptr, "  GOTO %s\n", startLabel);
             fprintf(fptr, "%s:\n", endLabel);
-            break;
+            return NULL;
         }
             
         case NODE_FOR: {
@@ -816,8 +813,7 @@ void generateIR(ASTNode* node, FILE *fptr) {
             generateIR(node->left, fptr);
             fprintf(fptr, "%s:\n", startLabel);
             if (node->right) {
-                generateIR(node->right, fptr);
-                char* condTemp = newTemp();
+                char* condTemp = generateIR(node->right, fptr);
                 fprintf(fptr, "  IF_FALSE %s GOTO %s\n", condTemp, endLabel);
             }
             for (int i = 0; i < node->childCount; i++) {
@@ -826,43 +822,45 @@ void generateIR(ASTNode* node, FILE *fptr) {
             if (node->extra) generateIR(node->extra, fptr);
             fprintf(fptr, "  GOTO %s\n", startLabel);
             fprintf(fptr, "%s:\n", endLabel);
-            break;
+            return NULL;
         }
             
         case NODE_RETURN:
             if (node->left) {
-                generateIR(node->left, fptr);
-                char* retTemp = newTemp();
-                fprintf(fptr, "  RETURN %s\n", retTemp);
+                temp = generateIR(node->left, fptr);
+                fprintf(fptr, "  RETURN %s\n", temp);
             } else {
                 fprintf(fptr, "  RETURN\n");
             }
-            break;
+            return NULL;
             
         case NODE_CALL: {
             for (int i = 0; i < node->childCount; i++) {
-                generateIR(node->children[i], fptr);
-                char* argTemp = newTemp();
+                char* argTemp = generateIR(node->children[i], fptr);
                 fprintf(fptr, "  PUSH_PARAM %s\n", argTemp);
             }
             char* callTemp = newTemp();
             fprintf(fptr, "  %s = CALL %s, %d\n", callTemp, node->value, node->childCount);
-            break;
+            return callTemp;
         }
             
-        case NODE_IDENTIFIER:
-            fprintf(fptr, "  %s = %s\n", newTemp(), node->value);
-            break;
+        case NODE_IDENTIFIER: {
+            char* idTemp = newTemp();
+            fprintf(fptr, "  %s = %s\n", idTemp, node->value);
+            return idTemp;
+        }
             
         case NODE_INTEGER:
         case NODE_FLOAT:
         case NODE_CHAR:
-        case NODE_STRING:
-            fprintf(fptr, "  %s = %s\n", newTemp(), node->value);
-            break;
+        case NODE_STRING: {
+            char* litTemp = newTemp();
+            fprintf(fptr, "  %s = %s\n", litTemp, node->value);
+            return litTemp;
+        }
             
         default:
-            break;
+            return NULL;
     }
 }
 

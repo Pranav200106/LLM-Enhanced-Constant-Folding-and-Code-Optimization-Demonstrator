@@ -1,13 +1,12 @@
 {
-  "summary": "*   \u26a0\ufe0f Issues Found: Uninitialized variables and dead code.",
-  "status": "Issues Found",
+  "summary": "\u2705 Optimization Correct",
+  "status": "Optimization Correct",
   "suggestions": [
-    "\u26a0\ufe0f Issues Found: Uninitialized variables and dead code.",
-    "Semantics not preserved: `t1` and `t4` are used uninitialized, leading to undefined behavior.",
-    "Further: Eliminate dead code: `t0`, `t2`, `t3` assignments and `PUSH_PARAM t1`.",
-    "Further: Resolve missing function name in `CALL` (or remove if unused).",
-    "Optimization ---"
+    "Semantics preserved; no unsafe optimizations.",
+    "**Dead Code Elimination:** Remove all unused temporaries (t0-t12).",
+    "**Redundant Assignment Elimination:** Remove assignments to temporaries whose values are immediately overwritten.",
+    "**Copy Propagation (more aggressive):** Ensure direct constant assignments to variables fully eliminate source temporaries."
   ],
-  "full_text": "*   \u26a0\ufe0f Issues Found: Uninitialized variables and dead code.\n*   Semantics not preserved: `t1` and `t4` are used uninitialized, leading to undefined behavior.\n*   Further: Eliminate dead code: `t0`, `t2`, `t3` assignments and `PUSH_PARAM t1`.\n*   Further: Resolve missing function name in `CALL` (or remove if unused).\n\n--- Optimization ---\nFUNCTION main:\n  RETURN 0\nEND FUNCTION main",
-  "optimized_code": "---\nFUNCTION main:\n  RETURN 0\nEND FUNCTION main"
+  "full_text": "\u2705 Optimization Correct\n*   Semantics preserved; no unsafe optimizations.\n*   **Dead Code Elimination:** Remove all unused temporaries (t0-t12).\n*   **Redundant Assignment Elimination:** Remove assignments to temporaries whose values are immediately overwritten.\n*   **Copy Propagation (more aggressive):** Ensure direct constant assignments to variables fully eliminate source temporaries.\n\n$Optimization:$\nFUNCTION main:\n  DECLARE a\n  a = 5\n  DECLARE b\n  b = 10\n  DECLARE c\n  c = 17\n  DECLARE d\n  d = 8\n  RETURN 8\nEND FUNCTION main",
+  "optimized_code": "$\nFUNCTION main:\n  DECLARE a\n  a = 5\n  DECLARE b\n  b = 10\n  DECLARE c\n  c = 17\n  DECLARE d\n  d = 8\n  RETURN 8\nEND FUNCTION main"
 }
