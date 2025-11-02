@@ -14,12 +14,20 @@ function App() {
   const handleOptimize = async (code) => {
     setLoading(true); // Start spinner
     try {
+///*     
       const res = await fetch("https://neurofold-j01j.onrender.com/run-llm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code }),
       });
-
+//*/
+/*
+      const res = await fetch("http://127.0.0.1:5001/run-llm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
+*/
       if (!res.ok) {
         throw new Error(`Server error: ${res.status}`);
       }

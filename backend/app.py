@@ -53,7 +53,6 @@ def run_llm():
             with open(SOURCE_FILE, "r", encoding="utf-8") as f:
                 written_content = f.read()
             print(f"✅ File written successfully. Size: {len(written_content)} bytes")
-            print(f"✅ First 100 chars of written file: {written_content[:100]}")
             
             # Check if content matches
             if written_content == source_code:
@@ -88,3 +87,4 @@ def run_llm():
 if __name__ == "__main__":
     print("🧠 LLM Flask API running at http://127.0.0.1:5001/run-llm")
     app.run(host="0.0.0.0", port=10000)
+    #app.run(host="127.0.0.1", port=5001)

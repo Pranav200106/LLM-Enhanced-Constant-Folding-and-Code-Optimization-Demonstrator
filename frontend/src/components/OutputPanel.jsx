@@ -24,7 +24,7 @@ function OutputPanel({
     <div className="card bg-base-100 shadow-xl p-6 w-full">
       {/* Scrollable Tab Headers */}
       <div className="w-full overflow-x-auto">
-        <div className="tabs flex-nowrap whitespace-nowrap">
+        <div className="tabs tabs-border flex-nowrap whitespace-nowrap">
           <a
             className={`tab tab-bordered ${
               activeTab === "before" ? "tab-active" : ""

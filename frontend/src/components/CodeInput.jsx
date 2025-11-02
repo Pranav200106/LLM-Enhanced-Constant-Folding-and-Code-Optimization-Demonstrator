@@ -6,34 +6,45 @@ function CodeInput({ onOptimize }) {
   const [fileName, setFileName] = useState("");
   const textareaRef = useRef(null);
 
+  // Handle file upload
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     setFileName(file.name);
 
     const reader = new FileReader();
     reader.onload = (event) => {
-      const content = event.target.result;
-      setCode(content);
-      console.log(content)
-      adjustTextareaHeight(content);
+      setCode(event.target.result);
     };
     reader.readAsText(file);
   };
 
-  const adjustTextareaHeight = (value) => {
+  // Dynamically adjust textarea height
+  const handleInput = (e) => {
     const textarea = textareaRef.current;
-    if (textarea) {
-      textarea.style.height = "auto";
-      textarea.style.height = textarea.scrollHeight + "px";
-    }
+    textarea.style.height = "auto";
+    textarea.style.height = textarea.scrollHeight + "px";
+    setCode(e.target.value);
   };
 
-  const handleInput = (e) => {
-    const value = e.target.value;
-    setCode(value);
-    adjustTextareaHeight(value);
+  // Load a sample program
+  const handleLoadSample = () => {
+    const sample = `int main() {
+    int x = 2;
+    int y = 3;
+    int z = (x + y) * 5 - (y / 2);
+    return z;
+}`;
+    setCode(sample);
+
+    // auto-resize textarea after setting
+    const textarea = textareaRef.current;
+    if (textarea) {
+      setTimeout(() => {
+        textarea.style.height = "auto";
+        textarea.style.height = textarea.scrollHeight + "px";
+      }, 0);
+    }
   };
 
   return (
@@ -48,23 +59,28 @@ function CodeInput({ onOptimize }) {
           defaultChecked
         />
         <div className="tab-content border-base-300 bg-base-100 p-10">
-          <h2 className="text-lg font-semibold mb-4">Paste Your Code</h2>
-
+          <h2 className="text-lg font-semibold mb-2">Input Code</h2>
           <textarea
             ref={textareaRef}
-            rows={1}
-            className="textarea w-full h-96 font-mono resize-none overflow-hidden rounded-lg"
+            rows={8}
+            className="textarea textarea-bordered w-full font-mono rounded-lg"
             value={code}
-            onInput={handleInput}
-            placeholder="Paste or write your C/C++ code here..."
+            placeholder="Paste your C code here..."
+            onChange={handleInput}
           />
 
-          <button
-            className="btn btn-primary mt-4"
-            onClick={() => onOptimize(code)}
-          >
-            Optimize Code
-          </button>
+          <div className="flex flex-wrap gap-3 mt-4">
+            <button className="btn btn-primary" onClick={() => onOptimize(code)}>
+              Optimize Code
+            </button>
+
+            <button
+              className="btn btn-outline btn-secondary"
+              onClick={handleLoadSample}
+            >
+              Load Sample Code
+            </button>
+          </div>
         </div>
 
         {/* === File Upload Tab === */}
@@ -75,23 +91,21 @@ function CodeInput({ onOptimize }) {
           aria-label="File Upload"
         />
         <div className="tab-content border-base-300 bg-base-100 p-10 flex-col">
-          <h2 className="text-lg font-semibold mb-4">
-            Upload Your Source File
-          </h2>
+          <h2 className="text-lg font-semibold mb-2">Upload your source code</h2>
           <div>
             <input
               type="file"
               accept=".c,.cpp,.txt"
-              className="file-input file-input-bordered w-full max-w-xs"
+              className="file-input w-full max-w-xs"
               onChange={handleFileUpload}
             />
-
-            {fileName && (
-              <p className="mt-2 text-sm text-gray-500">
-                Loaded file: <strong>{fileName}</strong>
-              </p>
-            )}
           </div>
+
+          {fileName && (
+            <p className="mt-2 text-sm text-gray-500">
+              Loaded file: <strong>{fileName}</strong>
+            </p>
+          )}
 
           <button
             className="btn btn-primary mt-4"

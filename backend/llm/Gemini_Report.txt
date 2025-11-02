@@ -1,14 +1,12 @@
-*   Semantics preserved.
-*   No unsafe optimizations.
-*   Remove dead temporaries (e.g., t0, t1).
-*   Eliminate DECLARE statements and assignments for a, b, c, d if not externally observable.
-*   Remove t13 = CALL , 1 as its result is unused.
+✅ Optimization Correct
+- Semantics preserved; all constant folding and copy propagation are correct.
+- No unsafe optimizations identified (assuming integer arithmetic for division).
+- Suggest: Eliminate all temporary variables (`t0` through `t11`).
+- Suggest: Eliminate `DECLARE x`, `DECLARE y`, `DECLARE z` as they are unused.
+- Suggest: Reduce function body to `RETURN 24`.
 ✅ Optimization Correct
 
 $Optimization:$
 FUNCTION main:
-  t12 = "Hello"
-  PUSH_PARAM t12
-  CALL , 1
-  RETURN 8
+  RETURN 24
 END FUNCTION main

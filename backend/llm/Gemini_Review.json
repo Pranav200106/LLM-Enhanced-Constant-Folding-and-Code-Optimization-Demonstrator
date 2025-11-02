@@ -1,14 +1,15 @@
 {
+  "success": true,
   "summary": "\u2705 Optimization Correct",
   "status": "Optimization Correct",
   "suggestions": [
-    "Semantics preserved.",
-    "No unsafe optimizations.",
-    "Remove dead temporaries (e.g., t0, t1).",
-    "Eliminate DECLARE statements and assignments for a, b, c, d if not externally observable.",
-    "Remove t13 = CALL , 1 as its result is unused."
+    "Semantics preserved; all constant folding and copy propagation are correct.",
+    "No unsafe optimizations identified (assuming integer arithmetic for division).",
+    "Suggest: Eliminate all temporary variables (`t0` through `t11`).",
+    "Suggest: Eliminate `DECLARE x`, `DECLARE y`, `DECLARE z` as they are unused.",
+    "Suggest: Reduce function body to `RETURN 24`."
   ],
-  "full_text": "*   Semantics preserved.\n*   No unsafe optimizations.\n*   Remove dead temporaries (e.g., t0, t1).\n*   Eliminate DECLARE statements and assignments for a, b, c, d if not externally observable.\n*   Remove t13 = CALL , 1 as its result is unused.\n\u2705 Optimization Correct\n\n$Optimization:$\nFUNCTION main:\n  t12 = \"Hello\"\n  PUSH_PARAM t12\n  CALL , 1\n  RETURN 8\nEND FUNCTION main",
-  "optimized_code": "$\nFUNCTION main:\n  t12 = \"Hello\"\n  PUSH_PARAM t12\n  CALL , 1\n  RETURN 8\nEND FUNCTION main",
-  "unoptimized_code": "FUNCTION main:\n  DECLARE a\n  t0 = 5\n  a = 5    ; [OPTIMIZED]\n  DECLARE b\n  t1 = 10\n  b = 10    ; [OPTIMIZED]\n  DECLARE c\n  t2 = 5    ; [OPTIMIZED]\n  t3 = 2\n  t4 = 10    ; [OPTIMIZED]\n  t5 = 10    ; [OPTIMIZED]\n  t6 = 20    ; [OPTIMIZED]\n  t7 = 3\n  t8 = 17    ; [OPTIMIZED]\n  c = 17    ; [OPTIMIZED]\n  DECLARE d\n  t9 = 17    ; [OPTIMIZED]\n  t10 = 2\n  t11 = 8    ; [OPTIMIZED]\n  d = 8    ; [OPTIMIZED]\n  t12 = \"Hello\"\n  PUSH_PARAM t12\n  t13 = CALL , 1\n  t14 = 8    ; [OPTIMIZED]\n  RETURN 8\nEND FUNCTION main\n\n\n"
+  "full_text": "\u2705 Optimization Correct\n- Semantics preserved; all constant folding and copy propagation are correct.\n- No unsafe optimizations identified (assuming integer arithmetic for division).\n- Suggest: Eliminate all temporary variables (`t0` through `t11`).\n- Suggest: Eliminate `DECLARE x`, `DECLARE y`, `DECLARE z` as they are unused.\n- Suggest: Reduce function body to `RETURN 24`.\n\u2705 Optimization Correct\n\n$Optimization:$\nFUNCTION main:\n  RETURN 24\nEND FUNCTION main",
+  "optimized_code": "$\nFUNCTION main:\n  RETURN 24\nEND FUNCTION main",
+  "unoptimized_code": "FUNCTION main:\n  DECLARE x\n  t0 = 2\n  x = 2    ; [OPTIMIZED]\n  DECLARE y\n  t1 = 3\n  y = 3    ; [OPTIMIZED]\n  DECLARE z\n  t2 = 2    ; [OPTIMIZED]\n  t3 = 3    ; [OPTIMIZED]\n  t4 = 5    ; [OPTIMIZED]\n  t5 = 5\n  t6 = 25    ; [OPTIMIZED]\n  t7 = 3    ; [OPTIMIZED]\n  t8 = 2\n  t9 = 1    ; [OPTIMIZED]\n  t10 = 24    ; [OPTIMIZED]\n  z = 24    ; [OPTIMIZED]\n  t11 = 24    ; [OPTIMIZED]\n  RETURN 24\nEND FUNCTION main\n\n\n"
 }
