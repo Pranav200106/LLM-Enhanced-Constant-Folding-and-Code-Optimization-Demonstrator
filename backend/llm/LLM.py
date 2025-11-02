@@ -292,7 +292,9 @@ def LLM():
         return {"summary": summary_line, "status": status}
 
     def extract_suggestions(review_text):
-        return re.findall(r"[-*•]\s+(.*)", review_text)
+        # Exclude lines that are status reports (e.g., about semantics or safety)
+        # and only capture actionable optimization suggestions.
+        return re.findall(r"[-*•]\s+(?!.*(?:semantics|unsafe|preserved|correct|issue))(.*)", review_text, re.IGNORECASE)
 
     def extract_tac_code(review_text):
         """
