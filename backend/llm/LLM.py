@@ -291,17 +291,22 @@ def LLM():
 
         return {"summary": summary_line, "status": status}
 
+    import re
+
     def extract_suggestions(review_text):
-        match = re.search(r"\$Suggestions:\$+\s*(.*?)\s*\$\$", review_text, re.DOTALL)
+        # Find all text enclosed between $$ ... $$ after $Suggestions:
+        match = re.search(r"\$Suggestions:[\s\\n]*", review_text)
         if match:
-            suggestions_block = match.group(1).strip()
+            # Extract all $$ ... $$ blocks
+            suggestions = re.findall(r"\$\$(.*?)\$\$", review_text, re.DOTALL)
+            # Clean up each suggestion (remove whitespace and bullets)
             suggestions = [
-                re.sub(r"^\s*[-*•]\s*", "", line).strip()
-                for line in suggestions_block.splitlines()
-                if line.strip()
+                re.sub(r"^\s*[-*•]?\s*", "", s.strip())
+                for s in suggestions if s.strip()
             ]
             return suggestions
         return []
+
 
 
     def extract_tac_code(review_text):
