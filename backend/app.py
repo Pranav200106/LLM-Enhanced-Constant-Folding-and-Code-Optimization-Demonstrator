@@ -1,12 +1,15 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from llm.LLM import LLM
+import os
 
 app = Flask(__name__)
 CORS(app)
 
 # Path to your compiler folder where source.c should go
-SOURCE_FILE = "/tmp/compiler/source.c"
+# Path to your compiler folder where source.c should go
+COMPILER_DIR = "/tmp/compiler"
+SOURCE_FILE = os.path.join(COMPILER_DIR, "source.c")
 
 @app.route("/")
 def home():

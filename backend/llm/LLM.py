@@ -1,4 +1,3 @@
-
 import os
 import subprocess
 import requests
@@ -19,7 +18,6 @@ def LLM():
     COMPILER_DIR = os.path.join("/tmp", "compiler")
     os.makedirs(COMPILER_DIR, exist_ok=True)
 
-
     COMPILER_EXECUTABLE_NAME = "compiler"
     OPTIMIZER_EXECUTABLE_NAME = "optimizer"
 
@@ -30,8 +28,12 @@ def LLM():
     OUTPUT_FILE = os.path.join(COMPILER_DIR, "Output.txt")
     SOURCE_FILE = os.path.join(COMPILER_DIR, "source.c")
 
-    REPORT_TEXT = os.path.join("llm", "Gemini_Report.txt")
-    REPORT_JSON = os.path.join("llm", "Gemini_Review.json")
+    # Create llm directory if it doesn't exist
+    LLM_DIR = os.path.join(os.path.dirname(__file__), "..")
+    os.makedirs(os.path.join(LLM_DIR, "llm"), exist_ok=True)
+    
+    REPORT_TEXT = os.path.join(LLM_DIR, "llm", "Gemini_Report.txt")
+    REPORT_JSON = os.path.join(LLM_DIR, "llm", "Gemini_Review.json")
 
     # ============================================================
     # RUN COMPILER EXECUTABLE TO GENERATE OUTPUT FILE
@@ -39,15 +41,23 @@ def LLM():
     import shutil
 
     # Copy executables from repo to /tmp/compiler if not already there
-    REPO_COMPILER_DIR = os.path.join(os.path.dirname(__file__), "compiler")
+    # Get the directory where LLM.py is located, then go to parent (backend), then to compiler
+    REPO_COMPILER_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "compiler")
+    
+    print(f"📂 Looking for executables in: {REPO_COMPILER_DIR}")
 
     for exe in ["compiler", "optimizer"]:
         src = os.path.join(REPO_COMPILER_DIR, exe)
         dst = os.path.join(COMPILER_DIR, exe)
-        if os.path.exists(src) and not os.path.exists(dst):
+        
+        print(f"🔍 Checking if {src} exists: {os.path.exists(src)}")
+        
+        if os.path.exists(src):
             shutil.copy(src, dst)
             os.chmod(dst, 0o755)  # make executable
-
+            print(f"✅ Copied {exe} to {dst}")
+        else:
+            print(f"⚠️ Source executable not found: {src}")
 
     def run_c_compiler():
         """Run the compiled C optimizer and wait for Output.txt to appear."""
