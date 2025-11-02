@@ -956,6 +956,7 @@ int main() {
         return 1;
     }
     generateIR(ast, ofptr);
+    fclose(ofptr);
     
     printf("\n=== COMPILATION COMPLETED SUCCESSFULLY ===\n");
     printf("\nStatistics:\n");
