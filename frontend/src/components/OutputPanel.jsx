@@ -15,7 +15,7 @@ function OutputPanel({ optimizedCode, optimizationLog, status, loading, unOptimi
         <div className="tabs tabs-border">
 
             <input type="radio" name="output" className="tab" aria-label="Optimized Code before LLM" defaultChecked/>
-            <div className="tab-content border-base-300 bg-base-100 p-10">
+            <div className="tab-content border-base-300 bg-base-100 p-4">
                 <h2 className="text-lg text-warning font-semibold mb-2">Optimized Code before LLM</h2>
                 <pre className="bg-base-200 p-3 rounded-lg font-mono whitespace-pre-wrap">
                     {unOptimizedCode|| "// Optimized code before LLM Validation appears here"}
@@ -23,7 +23,7 @@ function OutputPanel({ optimizedCode, optimizationLog, status, loading, unOptimi
             </div>
 
             <input type="radio" name="output" className="tab" aria-label="Optimized Code after LLM"/>
-            <div className="tab-content border-base-300 bg-base-100 p-10">
+            <div className="tab-content border-base-300 bg-base-100 p-4">
                 <h2 className="text-lg font-semibold mb-2 text-success">Optimized Code after LLM</h2>
                 <pre className="bg-base-200 p-3 rounded-lg font-mono whitespace-pre-wrap">
                     {optimizedCode || "// Optimized code after LLM validation will appear here"}
@@ -31,7 +31,7 @@ function OutputPanel({ optimizedCode, optimizationLog, status, loading, unOptimi
             </div>
 
             <input type="radio" name="output" className="tab" aria-label="Optimization Summary" />
-            <div className="tab-content border-base-300 bg-base-100 p-10">
+            <div className="tab-content border-base-300 bg-base-100 p-4">
                 {optimizationLog && (
                     <>
                     <h3 className="text-lg font-semibold text-info mb-2">Optimization Summary</h3>
