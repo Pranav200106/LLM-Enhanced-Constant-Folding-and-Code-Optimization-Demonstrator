@@ -16,8 +16,7 @@ def LLM():
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
     GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
 
-    ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-    COMPILER_DIR = os.path.join(ROOT_DIR, "backend", "compiler")
+    COMPILER_DIR = os.path.join("compiler")
 
     COMPILER_EXECUTABLE_NAME = "compiler"
     OPTIMIZER_EXECUTABLE_NAME = "optimizer"
@@ -29,8 +28,8 @@ def LLM():
     OUTPUT_FILE = os.path.join(COMPILER_DIR, "Output.txt")
     SOURCE_FILE = os.path.join(COMPILER_DIR, "source.c")
 
-    REPORT_TEXT = os.path.join(ROOT_DIR, "backend", "llm", "Gemini_Report.txt")
-    REPORT_JSON = os.path.join(ROOT_DIR, "backend", "llm", "Gemini_Review.json")
+    REPORT_TEXT = os.path.join("llm", "Gemini_Report.txt")
+    REPORT_JSON = os.path.join("llm", "Gemini_Review.json")
 
     # ============================================================
     # RUN COMPILER EXECUTABLE TO GENERATE OUTPUT FILE
