@@ -1,1 +1,1 @@
-web: gunicorn backend.app:app --timeout 60 --workers 1 --threads 2
+gunicorn --config gunicorn_config.py app:app
