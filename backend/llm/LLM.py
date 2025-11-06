@@ -275,30 +275,26 @@ def LLM():
 
     def extract_suggestions(review_text):
         # Find all text enclosed between $$ ... $$ after $Suggestions:
-        match = re.search(r"\$Suggestions:[\s\\n]*", review_text)
+        match = re.search(r"\$Suggestions:\$[\s\\n]*", review_text)
         if match:
             # Extract all $$ ... $$ blocks
-            suggestions = re.findall(r"\$\$(.*?)\$\$", review_text, re.DOTALL)
+            suggestions = re.findall(r"\$(.*?)\$", review_text, re.DOTALL)
             # Clean up each suggestion (remove whitespace and bullets)
             suggestions = [
                 re.sub(r"^\s*[-*•]?\s*", "", s.strip())
                 for s in suggestions if s.strip()
             ]
-            return suggestions
+            return suggestions[1:len(suggestions) - 1]
         return []
 
 
 
     def extract_tac_code(review_text):
-        """
-        Extracts the optimized TAC code section (if Gemini includes it).
-        Looks for headings like 'Optimization' or 'Optimized Code' and captures the code block.
-        """
-        # Try common section headers Gemini might use
+    # Find the $Optimization:$ header and capture everything after it
         match = re.search(
-            r"\$?Optimization:[:\n\s]*([\s\S]+?)(?:\n[-*•]|✅|⚠️|$)",
+            r"\$Optimization:\$\s*\n(.*)",
             review_text,
-            re.IGNORECASE
+            re.IGNORECASE | re.DOTALL
         )
 
         if match:
@@ -340,7 +336,7 @@ def LLM():
     - 2–4 bullet points only
     Keep the total output under 6 lines (suitable for frontend card view).
     Dont use any emojis.
-    Give suggestions with the heading "$Suggestions:$" and enclose each suggestions like "$$...$$" compulsorily.
+    Give suggestions with the heading "$Suggestions:$" and enclose each suggestions like "$...$" compulsorily.
     Also compulsorily generate your version of the optimized three address code with the heading: "$Optimization:$" in the end of the summary.
     All the optimized code must be in newlines. 
     """
@@ -379,18 +375,7 @@ def LLM():
             
         except Exception as e:
             print(f"❌ Error in review_output_file: {e}")
-            import traceback
-            traceback.print_exc()
-            return {
-                "success": False,
-                "message": f"Error processing review: {str(e)}",
-                "summary": "Error processing review",
-                "status": "Error",
-                "suggestions": [],
-                "full_text": "",
-                "optimized_code": None,
-                "unoptimized_code": optimized_code
-            }
+            
     # ============================================================
     # MAIN EXECUTION LOGIC
     # ============================================================
