@@ -6,9 +6,9 @@
 
 - **Automated Code Optimization**: Simply paste your C code into the web interface and get an optimized version in seconds.
 - **Constant Folding**: The C-based optimizer automatically identifies and evaluates constant expressions at compile time.
-- **LLM-Powered Analysis**: The optimized code is reviewed by the Gemini LLM, which verifies semantic correctness and suggests additional improvements.
+- **LLM-Powered Analysis**: The optimized code is reviewed by the Gemini LLM, which verifies semantic correctness, identifies potential issues (like semantic errors in factorial logic), and suggests further optimizations (e.g., aggressive constant folding, dead code elimination, strength reduction for identity operations).
 - **Interactive UI**: A user-friendly web interface built with React and Tailwind CSS allows you to easily input code and view the results.
-- **Detailed Feedback**: The UI displays the optimized code, the LLM's suggestions, and a summary of the optimization status.
+- **Detailed Feedback**: The UI displays the optimized code, the LLM's suggestions, a summary of the optimization status, and highlights any issues found, such as semantic errors or redundant assignments.
 
 ## 🚀 How It Works
 
@@ -19,7 +19,7 @@ The project is divided into a frontend, a backend, and a C-based compiler/optimi
 3.  **Compilation**: The backend invokes a C-based compiler, which performs lexical analysis, parsing, and semantic analysis to generate an Abstract Syntax Tree (AST).
 4.  **Intermediate Code Generation**: The compiler generates three-address code (TAC) from the AST and saves it to `IR.txt`.
 5.  **Optimization**: A separate C-based optimizer reads `IR.txt`, performs constant folding, and writes the optimized TAC to `Output.txt`.
-6.  **LLM Review**: The optimized TAC is sent to the Gemini API, which reviews the code for semantic correctness and suggests further optimizations.
+6.  **LLM Review**: The optimized TAC is sent to the Gemini API, which reviews the code for semantic correctness, identifies issues (e.g., semantic errors, redundant assignments), and suggests further optimizations (e.g., aggressive constant folding, dead code elimination, strength reduction).
 7.  **Results Display**: The backend sends the optimized code, LLM suggestions, and status back to the frontend, where it is displayed to the user.
 
 ## 🛠️ Tech Stack
@@ -91,6 +91,23 @@ The project is divided into a frontend, a backend, and a C-based compiler/optimi
 ## 🤝 Contributing
 
 Contributions are welcome! If you have any ideas, suggestions, or bug reports, please open an issue or submit a pull request.
+
+## ⚡ Hardware Implementation (Optional)
+
+This project also includes an optional hardware component for demonstrating code optimization on an Arduino board. The `hardware/` directory contains the necessary code for this implementation.
+
+### Components:
+
+- Arduino board (e.g., Arduino Uno)
+- Jumper wires
+- Breadboard (optional)
+
+### Setup:
+
+1.  Connect your Arduino board to your computer.
+2.  Open the `hardware/arduino.cpp` file in the Arduino IDE.
+3.  Upload the code to your Arduino board.
+4.  Run the `hardware/main.py` script to interact with the Arduino and observe the optimized code execution.
 
 ## 📄 License
 
