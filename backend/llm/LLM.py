@@ -349,20 +349,6 @@ def LLM():
         
         try:
             review_text, raw_json = call_gemini_api(prompt)
-            
-            # Check if we got an error response
-            if review_text.startswith("⚠️"):
-                print(f"⚠️ Gemini API returned an error: {review_text}")
-                return {
-                    "success": False,
-                    "message": "Failed to get AI review",
-                    "summary": review_text,
-                    "status": "Error",
-                    "suggestions": [],
-                    "full_text": review_text,
-                    "optimized_code": None,
-                    "unoptimized_code": optimized_code
-                }
 
             print("\n=== Gemini Review ===\n")
             print(review_text)
@@ -377,7 +363,6 @@ def LLM():
 
             # Save structured JSON
             structured_output = {
-                "success": True,
                 "summary": summary_info["summary"],
                 "status": summary_info["status"],
                 "suggestions": suggestions,
