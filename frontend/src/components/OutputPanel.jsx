@@ -1,4 +1,5 @@
 import { useState } from "react";
+import TACCostComparison from "./TACCostComparison";
 
 function OutputPanel({
   optimizedCode,
@@ -49,6 +50,14 @@ function OutputPanel({
           >
             Optimization Summary
           </a>
+          <a
+            className={`tab tab-bordered ${
+              activeTab === "performance" ? "tab-active" : ""
+            }`}
+            onClick={() => setActiveTab("performance")}
+          >
+            Performance Analysis
+          </a>
         </div>
       </div>
 
@@ -59,22 +68,51 @@ function OutputPanel({
             <h2 className="text-lg text-warning font-semibold mb-2">
               Optimized Code before LLM
             </h2>
-            <pre className="bg-base-200 p-3 rounded-lg font-mono whitespace-pre-wrap">
-              {unOptimizedCode ||
-                "// Optimized code before LLM Validation appears here"}
-            </pre>
+            <div className="alert alert-warning">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="stroke-current shrink-0 h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+                <span>
+                  Optimized code before LLM Validation appears here
+                </span>
+              </div>
           </div>
         )}
+        
 
         {activeTab === "after" && (
           <div className="p-6">
             <h2 className="text-lg text-success font-semibold mb-2">
               Optimized Code after LLM
             </h2>
-            <pre className="bg-base-200 p-3 rounded-lg font-mono whitespace-pre-wrap">
-              {optimizedCode ||
-                "// Optimized code after LLM validation will appear here"}
-            </pre>
+            <div className="alert alert-warning">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="stroke-current shrink-0 h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+                <span>
+                    Optimized code after LLM validation will appear here
+                </span>
+              </div>
           </div>
         )}
 
@@ -100,6 +138,37 @@ function OutputPanel({
               <p className="text-gray-500">
                 No optimization suggestions available.
               </p>
+            )}
+          </div>
+        )}
+
+        {activeTab === "performance" && (
+          <div className="p-6">
+            {unOptimizedCode && optimizedCode ? (
+              <TACCostComparison
+                unOptimizedCode={unOptimizedCode}
+                optimizedCode={optimizedCode}
+              />
+            ) : (
+              <div className="alert alert-warning">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="stroke-current shrink-0 h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+                <span>
+                  No optimization data available. Run the optimizer to see
+                  performance analysis.
+                </span>
+              </div>
             )}
           </div>
         )}

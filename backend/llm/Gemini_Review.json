@@ -1,13 +1,11 @@
 {
-  "success": true,
-  "summary": "\u26a0\ufe0f Issues Found: Semantic error in factorial logic.",
-  "status": "Issues Found",
+  "summary": "\u2705 Optimization Correct",
+  "status": "Optimization Correct",
   "suggestions": [
-    "Fix factorial loop logic to `result = result * i`.",
-    "Apply aggressive constant folding and dead code elimination.",
-    "Perform strength reduction for identity operations (`1 * X`, `X + 0`)."
+    "Eliminate all temporary variables and unused DECLARE statements.",
+    "Perform full constant folding to RETURN 24."
   ],
-  "full_text": "\u26a0\ufe0f Issues Found: Semantic error in factorial logic.\n\n*   Factorial loop logic `result = i` is semantically incorrect; it should be `result = result * i`.\n*   Excessive redundant temporary assignments (e.g., `t0=1`, `t1=0`, `t2=1`, etc.).\n*   Identity operations (`1 * X`, `X + 0`) are not fully optimized.\n\n$Suggestions:$$\n*   Fix factorial loop logic to `result = result * i`.\n*   Apply aggressive constant folding and dead code elimination.\n*   Perform strength reduction for identity operations (`1 * X`, `X + 0`).\n$$\n\n$Optimization:$\nFUNCTION factorial:\n  PUSH_PARAM n\n  DECLARE result\n  DECLARE i\n  result = 1\n  i = n\n  t0 = n <= 1\n  IF_FALSE t0 GOTO L_loop_start\n  RETURN 1\nL_loop_start:\n  t1 = i > 1\n  IF_FALSE t1 GOTO L_loop_end\n  result = result * i\n  i = i - 1\n  GOTO L_loop_start\nL_loop_end:\n  RETURN result\nEND FUNCTION factorial\n\nFUNCTION main:\n  DECLARE y\n  PUSH_PARAM 5\n  y = CALL , 1\n  RETURN y\nEND FUNCTION main",
-  "optimized_code": "$\nFUNCTION factorial:\n  PUSH_PARAM n\n  DECLARE result\n  DECLARE i\n  result = 1\n  i = n\n  t0 = n <= 1\n  IF_FALSE t0 GOTO L_loop_start\n  RETURN 1\nL_loop_start:\n  t1 = i > 1\n  IF_FALSE t1 GOTO L_loop_end\n  result = result * i\n  i = i - 1\n  GOTO L_loop_start\nL_loop_end:\n  RETURN result\nEND FUNCTION factorial\n\nFUNCTION main:\n  DECLARE y\n  PUSH_PARAM 5\n  y = CALL , 1\n  RETURN y\nEND FUNCTION main",
-  "unoptimized_code": "FUNCTION factorial:\n  PUSH_PARAM n\n  DECLARE result\n  DECLARE i\n  DECLARE temp\n  DECLARE one\n  DECLARE zero\n  t0 = 1\n  one = 1    ; [OPTIMIZED]\n  t1 = 0\n  zero = 0    ; [OPTIMIZED]\n  t2 = 1    ; [OPTIMIZED]\n  t3 = 0    ; [OPTIMIZED]\n  t4 = 1    ; [OPTIMIZED]\n  result = 1    ; [OPTIMIZED]\n  t5 = n\n  i = t5\n  t6 = n\n  t7 = 1    ; [OPTIMIZED]\n  t8 = 0    ; [OPTIMIZED]\n  t9 = 1    ; [OPTIMIZED]\n  t10 = t6 <= 1\n  IF_FALSE t10 GOTO L0\n  t11 = 1    ; [OPTIMIZED]\n  RETURN 1\n  GOTO L1\nL0:\nL1:\nL2:\n  t12 = i\n  t13 = 1    ; [OPTIMIZED]\n  t14 = 1    ; [OPTIMIZED]\n  t15 = 1    ; [OPTIMIZED]\n  t16 = t12 > 1\n  IF_FALSE t16 GOTO L3\n  t17 = 1    ; [OPTIMIZED]\n  t18 = i\n  t19 = 1 * t18\n  temp = t19\n  t20 = temp\n  t21 = 0    ; [OPTIMIZED]\n  t22 = t20 + 0\n  result = t22\n  t23 = i\n  t24 = 1    ; [OPTIMIZED]\n  t25 = 0    ; [OPTIMIZED]\n  t26 = 1    ; [OPTIMIZED]\n  t27 = t23 - 1\n  i = t27\n  GOTO L2\nL3:\n  t28 = result\n  RETURN t28\nEND FUNCTION factorial\n\n\nFUNCTION main:\n  DECLARE x\n  DECLARE y\n  t29 = 2\n  t30 = 3\n  t31 = 5    ; [OPTIMIZED]\n  t32 = 0\n  t33 = 5    ; [OPTIMIZED]\n  x = 5    ; [OPTIMIZED]\n  t34 = 5    ; [OPTIMIZED]\n  PUSH_PARAM 5\n  t35 = CALL , 1\n  y = t35\n  t36 = y\n  t37 = 0\n  t38 = t36 + 0\n  RETURN t38\nEND FUNCTION main\n\n\n"
+  "full_text": "\u2705 Optimization Correct\n- Semantics preserved; no unsafe optimizations detected.\n$Suggestions:$\n- $Eliminate all temporary variables and unused DECLARE statements.$\n- $Perform full constant folding to RETURN 24.$\n$Optimization:$\nFUNCTION main:\n  RETURN 24\nEND FUNCTION main",
+  "optimized_code": "FUNCTION main:\n  RETURN 24\nEND FUNCTION main",
+  "unoptimized_code": "FUNCTION main:\n  DECLARE x\n  t0 = 2\n  x = 2    ; [OPTIMIZED]\n  DECLARE y\n  t1 = 3\n  y = 3    ; [OPTIMIZED]\n  DECLARE z\n  t2 = 2    ; [OPTIMIZED]\n  t3 = 3    ; [OPTIMIZED]\n  t4 = 5    ; [OPTIMIZED]\n  t5 = 5\n  t6 = 25    ; [OPTIMIZED]\n  t7 = 3    ; [OPTIMIZED]\n  t8 = 2\n  t9 = 1    ; [OPTIMIZED]\n  t10 = 24    ; [OPTIMIZED]\n  z = 24    ; [OPTIMIZED]\n  t11 = 24    ; [OPTIMIZED]\n  RETURN 24\nEND FUNCTION main\n\n\n"
 }
